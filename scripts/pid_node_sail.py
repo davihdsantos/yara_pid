@@ -11,7 +11,7 @@ def callback(data):
     pub.publish(tmp)
     
 def listener():
-    rospy.init_node('pid_control', anonymous=True)
+    rospy.init_node('sail_control', anonymous=True)
     rospy.Subscriber("/eboat/mission_control/observations", Float32MultiArray, callback)
     rospy.spin()
 
