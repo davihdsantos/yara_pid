@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 import rospy
 from std_msgs.msg import String
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, Int16
 from gazebo_msgs.msg import ModelStates, LinkStates
 from simple_pid import PID
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from numpy import rad2deg
 
-pub = rospy.Publisher('eboat/control_interface/rudder', Float32, queue_size=10)
-pid_rudder = PID(-1, -0.05, 0.0)
-pid_rudder.output_limits = (-90, 90)
+pub = rospy.Publisher('eboat/control_interface/propulsion', Int16, queue_size=10)
+pid_speed = PID(-1, -0.05, 0.0)
+pid_speed.output_limits = (0, 3)
 heading_sp = Float32()
-rudder = Float32()
 eboat_heading_current = 0
+speed_sp = Int16(3)
 
 def callback(data):
     eboat_name = 'eboat'
@@ -24,8 +24,8 @@ def callback(data):
     pub.publish(rudder)
     # print(eboat_heading_current)
 
-def callback_heading_sp(data):
-    heading_sp.data = data.data
+def callback_speed_sp(data):
+    speed_sp.data = data.data
     # print(heading_sp)
 
 def get_link_angle_deg (orientation):
@@ -37,8 +37,9 @@ def get_link_angle_deg (orientation):
     return rad2deg(yaw)
     
 def listener():
-    rospy.init_node('rudder_control', anonymous=True)
-    rospy.Subscriber("/eboat/control_interface/heading_sp", Float32, callback_heading_sp)
+    rospy.init_node('speed_control', anonymous=True)
+    rospy.Subscriber("/eboat/mission_control/observations", Float32MultiArray, callback)
+    rospy.Subscriber("/eboat/control_interface/speed_sp", Float32, callback_speed_sp)
     rospy.Subscriber("/gazebo/model_states", ModelStates, callback)
 
     rospy.spin()

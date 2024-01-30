@@ -161,7 +161,7 @@ include_directories(
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
-catkin_install_python(PROGRAMS scripts/pid_node.py
+catkin_install_python(PROGRAMS scripts/pid_node_rudder.py scripts/pid_node_sail.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
